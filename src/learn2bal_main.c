@@ -137,7 +137,7 @@ int main(void) {
 
 	// initialize USART, configure for STDOUT, and send ASCII boot message
 	initStdOutUSART();
-	printf("IMU Evaluation\r\n");
+	printf("learn2bal launching...\r\n");
 
 	// initialize ST IMU
 	initST();
