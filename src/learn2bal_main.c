@@ -123,7 +123,7 @@ int main(void) {
 	TCE0.INTCTRLA = 0x00; 	// no timer overflow interrupt
 	TCE0.INTCTRLB = 0x00;
 	TCE0.PER = 65535;     						// 40000 = 0.01s (100Hz) with 16MHz clock and prescaler = 4
-	TCE0.CCA = 60000;
+	TCE0.CCA = 0; //60000;
 	TCE0.CCB = 10000;
 	PORTE.DIR |= PIN0_bm | PIN1_bm;
 
@@ -154,40 +154,26 @@ int main(void) {
 	PORTF.OUT &= ~PIN6_bm;
 	PORTF.OUT &= ~PIN7_bm;
 
-	/* brake for all time
-	while(1){
-		PORTF.OUT |= PIN3_bm;
-		PORTF.OUT |= PIN4_bm;
-		PORTF.OUT |= PIN6_bm;
-		PORTF.OUT |= PIN7_bm;
-	}
-	*/
+	unsigned char dirFlag = 0;
 
 	while(1){
-		PORTF.OUT |= PIN3_bm;
-		PORTF.OUT &= ~PIN4_bm;
-		PORTF.OUT |= PIN6_bm;
-		PORTF.OUT &= ~PIN7_bm;
-		_delay_us(6000);
 
-		PORTF.OUT &= ~PIN3_bm;
-		PORTF.OUT |= PIN4_bm;
-		PORTF.OUT |= PIN6_bm;
-		PORTF.OUT &= ~PIN7_bm;
-		_delay_us(6000);
+		if(dirFlag){
+			PORTF.OUT |= PIN3_bm;
+			PORTF.OUT &= ~PIN4_bm;
+			dirFlag = 0;
+		} else {
+			PORTF.OUT &= ~PIN3_bm;
+			PORTF.OUT |= PIN4_bm;
+			dirFlag = 1;
+		}
 
-		PORTF.OUT &= ~PIN3_bm;
-		PORTF.OUT |= PIN4_bm;
-		PORTF.OUT &= ~PIN6_bm;
-		PORTF.OUT |= PIN7_bm;
-		_delay_us(6000);
-
-		PORTF.OUT |= PIN3_bm;
-		PORTF.OUT &= ~PIN4_bm;
-		PORTF.OUT &= ~PIN6_bm;
-		PORTF.OUT |= PIN7_bm;
-		_delay_us(6000);
-
+		for (unsigned int i = 0; i<=60000; i = i+10000){
+			TCE0.CCA = i;
+			_delay_ms(250);
+		}
+		TCE0.CCA = 0;
+		_delay_ms(500);
 	}
 
 
